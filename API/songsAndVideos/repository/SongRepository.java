@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
 
-    // ✅ 제목 검색 (대소문자 구분 없음)
+    // 제목 검색 (대소문자 구분 없음)
     List<Song> findByTitleContainingIgnoreCase(String title);
 
-    // ✅ 아티스트명 검색 (대소문자 구분 없음)
+    // 아티스트명 검색 (대소문자 구분 없음)
     List<Song> findByArtistContainingIgnoreCase(String artist);
 }
