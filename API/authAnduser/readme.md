@@ -1,3 +1,5 @@
+# must read
+
 # 1. 회원가입 및 로그인 인증
 ### config - SecurityConfig, SwaggerConfiguration: Swagger에서 Authorization사용하려면 설정 해야합니다
 ### controller - AuthController : 회원가입, 로그인
