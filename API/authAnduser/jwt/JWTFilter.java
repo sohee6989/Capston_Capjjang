@@ -15,65 +15,84 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/** 스프링 시큐리티 filter chain에 요청에 담긴 JWT를 검증하기 위한 커스텀 필터를 등록
- * 해당 필터를 통해 요청 헤더 Authorization 키에 JWT가 존재하는 경우 JWT를 검증하고 강제로SecurityContextHolder에 세션을 생성
- * **/
 
+/**
+ * 스프링 시큐리티 filter chain에 요청에 담긴 JWT를 검증하기 위한 커스텀 필터를 등록
+ * JWT 검증 및 SecurityContext에 인증 정보 세팅을 위한 필터.
+ * 요청 헤더의 Authorization에서 JWT를 추출하여 검증하고 인증을 처리합니다.
+ */
 @AllArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         
-        // request에서 Authorization 헤더를 찾음
-        String authorization = request.getHeader("Authorization");
+        // 0. oauth2 요청은 무시
+        String requestURI = request.getRequestURI();
 
-        if (authorization == null || !authorization.startsWith("Bearer")) {
-            System.out.println("token null");
+        // OAuth2 요청은 필터링하지 않음
+        if (requestURI.startsWith("/login/oauth2")) {
             filterChain.doFilter(request, response);
-
-            return; //조건이 해당되면 메소드 종료 (필수)
+            return;
         }
 
-        System.out.println("authorization now");
 
-        // Bearer 부분 제거 후 순수 토큰만 획득
+        // 1. Authorization 헤더에서 토큰 추출
+        String authorization = request.getHeader("Authorization");
+
+
+        // 2. Authorization 헤더가 없거나 "Bearer"로 시작하지 않으면 필터 종료
+        if (authorization == null || !authorization.startsWith("Bearer")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        // 3. Bearer 부분 제거 후 순수 토큰만 획득
         String token = authorization.split(" ")[1];
 
 
+        // 4. 토큰이 만료되었거나 블랙리스트에 있으면 종료
         if (jwtUtil.isExpired(token)) {
-            System.out.println("token expired");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 토큰입니다.");
             filterChain.doFilter(request, response);
-
-            return; //조건이 해당되면 메소드 종료 (필수)
+            return;
         }
 
+
+        // 5. 토큰에서 사용자 정보 추출
         String email = jwtUtil.getEmail(token);
         String roleString = jwtUtil.getRole(token);
 
 
-
-        // String 값을 Role enum으로 변환
+        // 6. Role 값을 enum으로 변환
         Role role = Role.valueOf(roleString.replace("ROLE_", ""));  // 예: "ROLE_ADMIN" -> Role.ADMIN
 
+
+        // 7. AppUser 객체 생성
         AppUser appUser = new AppUser();
         appUser.setEmail(email);
         appUser.setName("tempname");
         appUser.setPassword("temppassword");
         appUser.setRole(role);
 
+
+        // 8. CustomUserDetails 생성
         CustomUserDetails customUserDetails = new CustomUserDetails(appUser);
 
-        // 스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 
-        // 세션에 사용자 등록
+        // 9. 인증 토큰 생성
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, token, customUserDetails.getAuthorities());
+
+
+        // 10. SecurityContext에 인증 정보 설정
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
 
+        // 11. 다음 필터로 요청 전달
         filterChain.doFilter(request, response);
-
     }
 }
