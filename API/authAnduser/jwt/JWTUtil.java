@@ -17,6 +17,7 @@ public class JWTUtil {
 
     private final Key key;
 
+
     public JWTUtil(@Value("${spring.jwt.secret}") String secret){
         byte[] byteSecreteKey = Decoders.BASE64.decode(secret);
         key = Keys.hmacShaKeyFor(byteSecreteKey);
@@ -30,6 +31,7 @@ public class JWTUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("role", String.class);
     }
 
+    /** 토큰 만료 **/
     public Boolean isExpired(String token) {
 
         //return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
@@ -55,6 +57,7 @@ public class JWTUtil {
         }
     }
 
+    /** 토큰 생성 **/
     public String createJwt(String email, String role, Long expiredMs){
         Claims claims = Jwts.claims();
         claims.put("email", email);
@@ -67,4 +70,5 @@ public class JWTUtil {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
 }
