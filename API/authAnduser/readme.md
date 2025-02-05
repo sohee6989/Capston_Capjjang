@@ -38,7 +38,9 @@ public List<PracticeSessionRequest> getPracticeHistory(Authentication authentica
 CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 AppUser user = this.userService.getUser(userDetails.getEmail());
 ***
-위 두 줄을 그냥 그대로 사용하시면 AppUser객체의 데이터를 사용할 수 있습니다. 
+위 파일들 그대로 가져가신 다음, 메소드 구현하실 때 위 두 줄을 그냥 그대로 사용하셔서 사용자 테이블에서 데이터 조회하면 됩니다.
+
+오류 시 연락 주세요
    
 </br>
 
