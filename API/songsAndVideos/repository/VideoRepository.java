@@ -8,5 +8,4 @@ import java.util.List;
 
 @Repository
 public interface VideoRepository extends JpaRepository<RecordedVideo, Long> {
-    List<RecordedVideo> findBySpeed(double speed); // 특정 재생 속도의 비디오 검색
 }
