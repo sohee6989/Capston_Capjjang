@@ -1,34 +1,52 @@
 package com.example._4.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "recorded_video")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RecordedVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String videoUrl; // 비디오 파일 URL
+    @Lob
+    @Column(columnDefinition = "LONGBLOB") // 바이너리 데이터 (MP4 파일 저장)
+    private byte[] videoData;
 
     @Column(nullable = false)
-    private LocalDateTime recordedAt; // 녹화 날짜
+    private LocalDateTime recordedAt; // 녹화 시간
 
-    @Column
-    private Integer startTime = 0; // 기본값 0초로 변경
+    @Column(nullable = false)
+    private double speed; // ️ 재생 속도 (0.5x ~ 2.0x)
 
-    @Column
-    private Integer endTime = null; // 사용자가 설정 안 하면 null
+    @Column(nullable = false)
+    private int startTime; // 재생 시작 시간
 
-    @Column
-    private double speed = 1.0; // 기본 재생 속도 1.0x
+    @Column(nullable = true)
+    private Integer endTime; // 재생 종료 시간
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public void setEndTime(Integer endTime) {
+        this.endTime = endTime;
+    }
+
+    public Integer getEndTime() {
+        return endTime;
+    }
 }
