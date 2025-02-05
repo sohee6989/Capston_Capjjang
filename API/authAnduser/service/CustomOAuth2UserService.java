@@ -22,6 +22,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private final UserRepository userRepository;
 
+    /** 사용자 프로필 이미지 경로 **/
+    private static final String PROFILE_IMAGE_DIR = "C:\\Users\\ymdwa\\capston\\profile_images\\";
+    private static final String DEFAULT_PROFILE_IMAGE = PROFILE_IMAGE_DIR + "defaultUserIcon.jpg";
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
@@ -69,6 +73,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     newUser.setName(name);
                     newUser.setPassword(""); // OAuth2 사용자는 비밀번호 없음
                     newUser.setRole(Role.USER); // 기본 ROLE 설정
+                    newUser.setProfileImageUrl(DEFAULT_PROFILE_IMAGE);
                     return userRepository.save(newUser);
                 });
 
