@@ -14,6 +14,17 @@ import java.io.IOException;
 public class FileUploadController {
     private final FileUploadService fileUploadService;
 
+    // 비디오 업로드
+    @PostMapping("/video")
+    public ResponseEntity<String> uploadVideo(@RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(fileUploadService.uploadVideo(file));
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Video upload failed.");
+        }
+    }
+
+    // 노래 업로드
     @PostMapping("/song")
     public ResponseEntity<String> uploadSong(@RequestParam("file") MultipartFile file,
                                              @RequestParam("title") String title,
@@ -21,7 +32,7 @@ public class FileUploadController {
         try {
             return ResponseEntity.ok(fileUploadService.uploadSong(file, title, artist));
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("File upload failed.");
+            return ResponseEntity.status(500).body("Song upload failed.");
         }
     }
 }
