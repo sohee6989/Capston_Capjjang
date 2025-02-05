@@ -5,8 +5,8 @@ import capston.capston_spring.jwt.JWTUtil;
 import capston.capston_spring.jwt.LoginFilter;
 import capston.capston_spring.oauth2.OAuth2AuthenticationSuccessHandler;
 import capston.capston_spring.service.CustomOAuth2UserService;
-import capston.capston_spring.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -99,6 +99,10 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         // 로그인 성공 시 핸들러
                         .successHandler(oAuth2AuthenticationSuccessHandler)
+                        // 로그인 실패 시 핸들러
+                        .failureHandler((request, response, exception) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "OAuth2 로그인 실패: " + exception.getMessage());
+                        })
         );
 
         // jwt 필터 추가
