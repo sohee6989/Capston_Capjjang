@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/videos")
+@RequestMapping("/{mode}/videos")
 @RequiredArgsConstructor
 public class VideoController {
     private final VideoService videoService;
@@ -23,10 +23,14 @@ public class VideoController {
         return videoService.getAllVideos();
     }
 
-    // 비디오 조회
+    // 비디오 조회(연습모드에서만)
     @GetMapping("/{video_id}")
-    public Optional<RecordedVideo> getVideoById(@PathVariable Long video_id) {
-        return videoService.getVideoById(video_id);
+    public ResponseEntity<?> getVideoById(@PathVariable String mode, @PathVariable Long video_id) {
+        if (!mode.equals("practice")) {
+            return ResponseEntity.badRequest().body("Video playback is only available in practice mode.");
+        }
+        Optional<RecordedVideo> video = videoService.getVideoById(video_id);
+        return video.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 재생 구간 설정
