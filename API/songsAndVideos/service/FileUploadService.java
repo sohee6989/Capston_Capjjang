@@ -22,4 +22,9 @@ public class FileUploadService {
         videoRepository.save(video);
         return "Video uploaded successfully";
     }
+
+    // 노래 업로드 기능
+    public String uploadSong(MultipartFile file, String title, String artist) throws IOException {
+        return "Song '" + title + "' by " + artist + " uploaded successfully";
+    }
 }
