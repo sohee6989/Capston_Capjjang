@@ -21,24 +21,25 @@ public class Song {
     @Column(nullable = false)
     private String artist;
 
-    private String genre;
+    @Lob
+    @Column(columnDefinition = "LONGBLOB") // 바이너리 데이터 (MP3 파일 저장)
+    private byte[] audioData;
 
-    private int duration;
+    @Column(nullable = true)
+    private Integer highlightStart;
 
-    // 직접 Getter 추가 (Lombok 문제 발생 시 대비)
-    public String getTitle() {
-        return title;
-    }
+    @Column(nullable = true)
+    private Integer highlightEnd;
 
-    public String getArtist() {
-        return artist;
-    }
+    @Column(nullable = true)
+    private Integer verseStart;
 
-    public String getGenre() {
-        return genre;
-    }
+    @Column(nullable = true)
+    private Integer verseEnd;
 
-    public int getDuration() {
-        return duration;
-    }
+    @Column(nullable = true)
+    private Integer challengeStart; // 챌린지 시작
+
+    @Column(nullable = true)
+    private Integer challengeEnd; // 챌린지 종료
 }
