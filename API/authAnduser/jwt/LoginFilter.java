@@ -1,119 +1,98 @@
 package capston.capston_spring.jwt;
 
 import capston.capston_spring.dto.CustomUserDetails;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import capston.capston_spring.entity.AppUser;
+import capston.capston_spring.entity.Role;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.StreamUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
+
+/**
+ * 스프링 시큐리티 filter chain에 요청에 담긴 JWT를 검증하기 위한 커스텀 필터를 등록
+ * JWT 검증 및 SecurityContext에 인증 정보 세팅을 위한 필터.
+ * 요청 헤더의 Authorization에서 JWT를 추출하여 검증하고 인증을 처리합니다.
+ */
 @AllArgsConstructor
-public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+public class JWTFilter extends OncePerRequestFilter {
 
-    private final AuthenticationManager authenticationManager;
-    private final ObjectMapper objectMapper;
     private final JWTUtil jwtUtil;
 
 
-
-    /**
-     * 인증 처리 메소드
-     *
-     * UsernamePasswordAuthenticationFilter와 동일하게 UsernamePasswordAuthenticationToken 사용
-     * StreamUtils를 통해 request에서 messageBody(JSON) 반환
-     * 요청 JSON Example
-     * {
-     *    "email" : "aaa@bbb.com"
-     *    "password" : "test123"
-     * }
-     * 꺼낸 messageBody를 objectMapper.readValue()로 Map으로 변환 (Key : JSON의 키 -> email, password)
-     * Map의 Key(email, password)로 해당 이메일, 패스워드 추출 후
-     * UsernamePasswordAuthenticationToken의 파라미터 principal, credentials에 대입
-     *
-     * AbstractAuthenticationProcessingFilter(부모)의 getAuthenticationManager()로 AuthenticationManager 객체를 반환 받은 후
-     * authenticate()의 파라미터로 UsernamePasswordAuthenticationToken 객체를 넣고 인증 처리
-     * (여기서 AuthenticationManager 객체는 ProviderManager -> SecurityConfig에서 설정)
-     */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        try {
-            String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        
+        // 0. oauth2 요청은 무시
+        String requestURI = request.getRequestURI();
 
-            System.out.println("Request Body: " + messageBody);  // 메시지 바디 출력
-
-            // 요청 본문이 비어있는지 확인
-            if (messageBody == null || messageBody.isEmpty()) {
-                throw new RuntimeException("Request body is empty");
-            }
-
-            Map<String, String> usernamePasswordMap = this.objectMapper.readValue(messageBody, Map.class);
-
-            // 이메일과 비밀번호 추출
-            String email = usernamePasswordMap.get("email");
-            String password = usernamePasswordMap.get("password");
-
-            if (email == null || password == null) {
-                throw new RuntimeException("Email or password is missing");
-            }
-
-
-            // UsernamePasswordAuthenticationToken 생성
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password);
-
-            // AuthenticationManager로 인증 위임
-            return this.authenticationManager.authenticate(authToken);
-        } catch (IOException e) {  // AuthenticationException은 래핑하지 않고 그대로 던지기 -> 부모 클래스에서 실패 처리를 감지하지 못하고, unsuccessfulAuthentication이 호출되지 않는 문제가 생기기 때문
-            throw new RuntimeException("IO failed", e);
+        // OAuth2 요청은 필터링하지 않음
+        if (requestURI.startsWith("/login/oauth2")) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+
+        // 1. Authorization 헤더에서 토큰 추출
+        String authorization = request.getHeader("Authorization");
+
+
+        // 2. Authorization 헤더가 없거나 "Bearer"로 시작하지 않으면 필터 종료
+        if (authorization == null || !authorization.startsWith("Bearer")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        // 3. Bearer 부분 제거 후 순수 토큰만 획득
+        String token = authorization.split(" ")[1];
+
+
+        // 4. 토큰이 만료되었거나 블랙리스트에 있으면 종료
+        if (jwtUtil.isExpired(token)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 토큰입니다.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        // 5. 토큰에서 사용자 정보 추출
+        String email = jwtUtil.getEmail(token);
+        String roleString = jwtUtil.getRole(token);
+
+
+        // 6. Role 값을 enum으로 변환
+        Role role = Role.valueOf(roleString.replace("ROLE_", ""));  // 예: "ROLE_ADMIN" -> Role.ADMIN
+
+
+        // 7. AppUser 객체 생성
+        AppUser appUser = new AppUser();
+        appUser.setEmail(email);
+        appUser.setName("tempname");
+        appUser.setPassword("temppassword");
+        appUser.setRole(role);
+
+
+        // 8. CustomUserDetails 생성
+        CustomUserDetails customUserDetails = new CustomUserDetails(appUser);
+
+
+        // 9. 인증 토큰 생성
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, token, customUserDetails.getAuthorities());
+
+
+        // 10. SecurityContext에 인증 정보 설정
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+
+        // 11. 다음 필터로 요청 전달
+        filterChain.doFilter(request, response);
     }
-
-    //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-        System.out.println("Login successed");
-
-        // 1. 인증된 사용자 정보 가져오기
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        String email = customUserDetails.getEmail();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-
-        String role = auth.getAuthority();
-
-        // JWT token 생성
-        String token = jwtUtil.createJwt(email, role, 60*60*10L);
-
-        response.addHeader("Authorization", "Bearer " + token);
-
-
-
-    }
-
-    //로그인 실패시 실행하는 메소드
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        //response.setStatus(401);
-
-        System.out.println("Login failed: " + failed.getMessage());
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
-
-    }
-
-
 }
