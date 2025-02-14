@@ -47,4 +47,13 @@ AppUser user = this.userService.getUser(userDetails.getEmail());
    
 </br>
 
-# 2. 마이페이지 - 진행중
+# 2. 마이페이지 
+### controller - UserController 
+### dto - AccuracySessonResponse, EditNameRequest EditPasswordRequest, EditPasswordRequest, MyvideoResponse, UserProfile
+### entity - ...
+### exception - VideorNotFoundException
+### repository - ..
+### service - ..
+
+
+
