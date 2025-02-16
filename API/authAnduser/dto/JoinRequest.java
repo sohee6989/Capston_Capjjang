@@ -30,4 +30,7 @@ public class JoinRequest {
     @NotEmpty(message = "Password confirmation is required")
     @Size(min = 8, message = "Password2 should be at least 8 characters")
     private String password2;
+
+    @AssertTrue(message = "You must accept the terms and conditions")
+    private boolean termsAccepted;
 }
