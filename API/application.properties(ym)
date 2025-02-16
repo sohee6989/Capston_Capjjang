@@ -53,3 +53,12 @@ spring.security.oauth2.client.registration.google.authorization-grant-type=autho
 spring.security.oauth2.client.registration.google.client-authentication-method=client_secret_post
 spring.security.oauth2.client.registration.google.client-name=Google
 spring.security.oauth2.client.registration.google.scope=email, profile
+
+
+# SMTP 설정
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=your-email@gmail.com
+spring.mail.password=your-app-password   # 앱 비밀번호 입력(구글 계정에서 발급)
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
