@@ -1,6 +1,7 @@
 package capston.capston_spring.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,17 +10,19 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String password;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
 
