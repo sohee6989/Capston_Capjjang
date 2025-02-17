@@ -10,4 +10,5 @@ public class AccuracySessionResponse {
     private String songImgPath;
     private String artist;
     private Integer score;
+    private String feedback;
 }
