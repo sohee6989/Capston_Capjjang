@@ -2,6 +2,7 @@ package capston.capston_spring.service;
 
 import capston.capston_spring.dto.MyVideoResponse;
 import capston.capston_spring.entity.RecordedVideo;
+import capston.capston_spring.entity.VideoMode;
 import capston.capston_spring.exception.VideoNotFoundException;
 import capston.capston_spring.repository.RecordedVideoRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class VideoService {
 
     // Practice 모드 영상 조회
     public List<MyVideoResponse> getPracticeVideos(Long userId) {
-        List<RecordedVideo> videos = this.recordedVideoRepository.findByUserIdAndMode(userId, "PRACTICE");
+        List<RecordedVideo> videos = this.recordedVideoRepository.findByUserIdAndMode(userId, VideoMode.valueOf("PRACTICE"));
 
         return videos.stream().map(video -> new MyVideoResponse(
                 video.getId(),
@@ -40,7 +41,7 @@ public class VideoService {
 
     // Challenge 모드 영상 조회
     public List<MyVideoResponse> getChallengeVideos(Long userId) {
-        List<RecordedVideo> videos = this.recordedVideoRepository.findByUserIdAndMode(userId, "CHALLENGE");
+        List<RecordedVideo> videos = this.recordedVideoRepository.findByUserIdAndMode(userId, VideoMode.valueOf("CHALLENGE"));
 
         return videos.stream().map(video -> new MyVideoResponse(
                 video.getId(),
