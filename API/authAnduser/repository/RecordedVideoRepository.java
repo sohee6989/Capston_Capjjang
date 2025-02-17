@@ -9,7 +9,7 @@ public interface RecordedVideoRepository extends JpaRepository<RecordedVideo, Lo
 
     List<RecordedVideo> findByUserId(Long userId);
 
-    List<RecordedVideo> findByUserIdAndMode(Long userId, String practice);
+    List<RecordedVideo> findByUserIdAndMode(Long userId, VideoMode mode);
 
     void deleteByUserId(Long id);
 }
