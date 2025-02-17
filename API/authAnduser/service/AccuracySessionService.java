@@ -24,7 +24,8 @@ public class AccuracySessionService {
                 session.getSong().getTitle(),
                 session.getSong().getCoverImagePath(),
                 session.getSong().getArtist(),
-                session.getScore()
+                session.getScore(),
+                session.getFeedback()
         )).collect(Collectors.toList());
     }
 }
