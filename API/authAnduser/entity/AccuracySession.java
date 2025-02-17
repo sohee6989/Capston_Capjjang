@@ -1,9 +1,7 @@
 package capston.capston_spring.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,22 +9,33 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AccuracySession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 
     @ManyToOne
-    @JoinColumn(name = "song_id")
+    @JoinColumn(name = "song_id", nullable = false)
     private Song song;
 
+    @Column(nullable = false)       // 정확도 평가 세션
     private LocalDateTime startTime;
+
+    @Column(nullable = false)
     private LocalDateTime endTime;
 
-    private int score;
+    @Column(nullable = false)
+    private int score; // score 기본값 0 설정
+
+    @Column(length = 500)  // 피드백 내용 ?: 피드백 길이 제한
+    private String feedback;
 }
