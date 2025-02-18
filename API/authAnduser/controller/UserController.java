@@ -1,12 +1,13 @@
 package capston.capston_spring.controller;
 
 import capston.capston_spring.dto.*;
-import capston.capston_spring.entity.AppUser;
+import capston.capston_spring.entity.VideoMode;
 import capston.capston_spring.service.AccuracySessionService;
 import capston.capston_spring.service.UserService;
 import capston.capston_spring.service.VideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,12 @@ public class UserController {
     private final AccuracySessionService accuracySessionService;
     private final VideoService videoService;
 
+    /** 사용자 인증 유틸 메소드 **/
+    private Long getUserId(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return this.userService.getUser(userDetails.getEmail()).getId();
+    }
+
     /**
      * 마이페이지 메인, my profile
      * user info 전달 -> 프로필사진, 이름, 이메일
@@ -34,12 +41,8 @@ public class UserController {
     @GetMapping({"/home", "/profile"})
     public ResponseEntity<UserProfile> getProfile(Authentication authentication) {
         // 현재 로그인된 사용자 정보 가져오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        AppUser user = userService.getUser(userDetails.getEmail());
-
-        UserProfile userProfile = userService.getProfile(user.getId());
-
+        Long userId = getUserId(authentication);
+        UserProfile userProfile = userService.getProfile(userId);
         return ResponseEntity.ok(userProfile);
     }
 
@@ -54,12 +57,8 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("이름은 비어 있을 수 없습니다.");
         }
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = userService.getUser(userDetails.getEmail());
-
-        this.userService.updateName(user.getId(), request.getName());
-
+        Long userId = getUserId(authentication);
+        this.userService.updateName(userId, request.getName());
         return ResponseEntity.ok("이름이 성공적으로 수정되었습니다.");
     }
 
@@ -68,36 +67,27 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("비밀번호를 정확히 입력하세요.");
         }
+        Long userId = getUserId(authentication);
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = userService.getUser(userDetails.getEmail());
-
-        boolean success = this.userService.updatePassword(user.getId(), request.getCurrentPassword(), request.getNewPassword());
+        boolean success = this.userService.updatePassword(userId, request.getCurrentPassword(), request.getNewPassword());
 
         if (!success) {
             return ResponseEntity.badRequest().body("현재 비밀번호가 일치하지 않습니다.");
         }
-
         return ResponseEntity.ok("비밀번호가 성공적으로 수정되었습니다.");
     }
 
     @PatchMapping(value = "/profile/edit/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editProfileImg(Authentication authentication, @RequestParam("file") MultipartFile file) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = userService.getUser(userDetails.getEmail());
-
-        this.userService.updateProfileImage(user.getId(), file);
-
+        Long userId = getUserId(authentication);
+        this.userService.updateProfileImage(userId, file);
         return ResponseEntity.ok("프로필 이미지가 성공적으로 수정되었습니다.");
     }
 
     @DeleteMapping("/profile/deleteAccount")
     public ResponseEntity<?> deleteAccount(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = userService.getUser(userDetails.getEmail());
-
-        this.userService.deleteAccount(user.getId());
-
+        Long userId = getUserId(authentication);
+        this.userService.deleteAccount(userId);
         return ResponseEntity.ok("계정이 성공적으로 삭제되었습니다.");
     }
 
@@ -108,37 +98,33 @@ public class UserController {
      */
     @GetMapping("/myVideo")
     public Map<String, List<MyVideoResponse>> getMyVideoList(Authentication authentication){
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = this.userService.getUser(userDetails.getEmail());
-        Long userId = user.getId();
-
-        List<MyVideoResponse> practiceVideos = this.videoService.getPracticeVideos(userId);
-        List<MyVideoResponse> challengeVideos = this.videoService.getChallengeVideos(userId);
+        Long userId = getUserId(authentication);
 
         // PRACTICE와 CHALLENGE 구분하여 반환
         Map<String, List<MyVideoResponse>> response = new HashMap<>();
-        response.put("practiceVideos", practiceVideos);
-        response.put("challengeVideos", challengeVideos);
+        response.put("practiceVideos", this.videoService.getVideosByMode(userId, VideoMode.PRACTICE));
+        response.put("challengeVideos", this.videoService.getVideosByMode(userId, VideoMode.CHALLENGE));
 
         return response;
     }
 
+    @GetMapping("/myVideo/{videoId}")
+    public ResponseEntity<?> getMyVideo(@PathVariable("videoId") Long videoId){
+        MyVideoResponse video =  this.videoService.getVideo(videoId);
+        if (video == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 비디오를 찾을 수 없습니다.");}
+        return ResponseEntity.ok(video);
+    }
+
     @GetMapping("/myVideo/practice")
     public List<MyVideoResponse> getMyVideoPracticeList(Authentication authentication){
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = this.userService.getUser(userDetails.getEmail());
-        Long userId = user.getId();
-
-        return this.videoService.getPracticeVideos(userId);
+        Long userId = getUserId(authentication);
+        return this.videoService.getVideosByMode(userId, VideoMode.PRACTICE);
     }
 
     @GetMapping("/myVideo/challenge")
     public List<MyVideoResponse> getMyVideoChallengeList(Authentication authentication){
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = this.userService.getUser(userDetails.getEmail());
-        Long userId = user.getId();
-
-        return this.videoService.getChallengeVideos(userId);
+        Long userId = getUserId(authentication);
+        return this.videoService.getVideosByMode(userId, VideoMode.CHALLENGE);
     }
 
     @PostMapping(value = "/myVideo/{videoId}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -146,7 +132,7 @@ public class UserController {
             @RequestParam("file") MultipartFile file,
             @PathVariable("videoId") Long videoId  // 기존 영상의 ID를 받아옴
     ){
-        return videoService.editVideo(videoId, file);
+        return this.videoService.editVideo(videoId, file);
     }
 
 
@@ -157,10 +143,7 @@ public class UserController {
      */
     @GetMapping("/history")
     public List<AccuracySessionResponse> getPracticeHistory(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        AppUser user = this.userService.getUser(userDetails.getEmail());
-        Long userId = user.getId();
-
+        Long userId = getUserId(authentication);
         return this.accuracySessionService.getAccuracyHistory(userId);
     }
 
