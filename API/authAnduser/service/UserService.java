@@ -4,7 +4,7 @@ import capston.capston_spring.dto.UserProfile;
 import capston.capston_spring.entity.AppUser;
 import capston.capston_spring.entity.Role;
 import capston.capston_spring.exception.UserNotFoundException;
-import capston.capston_spring.repository.UserRepository;
+import capston.capston_spring.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +21,10 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RecordedVideoRepository recordedVideoRepository;
+    private final PracticeSessionRepository practiceSessionRepository;
+    private final ChallengeSessionRepository challengeSessionRepository;
+    private final AccuracySessionRepository accuracySessionRepository;
     private final PasswordEncoder passwordEncoder;
     
     /** 사용자 프로필 이미지 경로 
@@ -82,9 +86,10 @@ public class UserService {
         }
 
         String name = user.get().getName();
+        String email = user.get().getEmail();
         String profileImageUrl = user.get().getProfileImageUrl();
 
-        return new UserProfile(name, profileImageUrl);
+        return new UserProfile(name, email, profileImageUrl);
     }
 
     /** 회원 정보 수정 **/
@@ -135,7 +140,7 @@ public class UserService {
             file.transferTo(dest);  // 파일 저장
 
             // 5. DB에 이미지 URL 업데이트
-            user.setProfileImageUrl("/profile_images/" + fileName);  // 클라이언트에서 접근 가능한 경로로 저장
+            user.setProfileImageUrl("/profile_images/" + fileName);
 
             // 6. 저장된 이미지 URL 반환
             return user.getProfileImageUrl();
@@ -149,8 +154,10 @@ public class UserService {
     @Transactional
     public void deleteAccount(Long id){
         Optional<AppUser> user = this.userRepository.findById(id);
+        this.accuracySessionRepository.deleteByUserId(id);
+        this.recordedVideoRepository.deleteByUserId(id);
+        this.practiceSessionRepository.deleteByUserId(id);
+        this.challengeSessionRepository.deleteByUserId(id);
         this.userRepository.delete(user.get());
     }
-
-
 }
