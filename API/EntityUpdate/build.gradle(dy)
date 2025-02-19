@@ -27,10 +27,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일 인증 필요 시
 
     // Jakarta Mail API
-    implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
-    implementation 'com.sun.mail:jakarta.mail:2.1.2'
+    implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
 
-    runtimeOnly 'mysql:mysql-connector-java'  // MySQL 드라이버 (필요한 경우)
+    runtimeOnly 'com.mysql:mysql-connector-j:8.2.0'  // MySQL 드라이버 (필요한 경우)
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     implementation 'org.springdoc:springdoc-openapi-starter-common:2.2.0'
