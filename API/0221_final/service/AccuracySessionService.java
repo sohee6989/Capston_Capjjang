@@ -27,22 +27,22 @@ public class AccuracySessionService {
     private final AccuracySessionRepository accuracySessionRepository;
     private final UserRepository userRepository;
     private final SongRepository songRepository;
-    private final WebClient webClient;  // ✅ WebClient를 Bean으로 주입받음
+    private final WebClient webClient;  // WebClient를 Bean으로 주입받음
 
     /**
      * Python 서버에 분석 요청 후 결과를 받아서 DB에 저장
      */
     public AccuracySession analyzeAndSaveSession(Long userId, Long songId, String videoPath) {
-        // ✅ userId로 AppUser 조회
+        // userId로 AppUser 조회
         AppUser appUser = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
-        // ✅ songId로 Song 조회
+        // songId로 Song 조회
         var song = songRepository.findById(songId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid song ID: " + songId));
 
         try {
-            // ✅ WebClient로 Python 서버 호출
+            // WebClient로 Python 서버 호출
             Map<String, Object> responseBody = webClient.post()
                     .uri(uriBuilder -> uriBuilder
                             .scheme("http")
@@ -55,7 +55,7 @@ public class AccuracySessionService {
                             .build())
                     .retrieve()
                     .onStatus(
-                            status -> status.isError(),  // ✅ 상태 코드 확인 수정
+                            status -> status.isError(),  // 상태 코드 확인 수정
                             clientResponse -> {
                                 HttpStatusCode statusCode = clientResponse.statusCode();
                                 return clientResponse.bodyToMono(String.class)
@@ -64,7 +64,7 @@ public class AccuracySessionService {
                                         });
                             }
                     )
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})  // ✅ 안전한 타입 변환
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})  // 안전한 타입 변환
                     .block();
 
             if (responseBody == null) {
