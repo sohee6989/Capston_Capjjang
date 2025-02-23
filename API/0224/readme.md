@@ -1,3 +1,5 @@
+(수정 : )이라고 써놓은 부분만 수정하시면 됩니다
+
 ## 📂 1. ChallengeSessionController.java 변경 사항
 
 ### 🔹 변경된 점
