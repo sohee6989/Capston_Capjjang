@@ -5,7 +5,7 @@ spring.thymeleaf.cache=false
 
 # Spring DataSource (MySQL)
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.datasource.url=${DB_URL}
+spring.datasource.url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
 spring.datasource.username=${DB_USERNAME}
 spring.datasource.password=${DB_PASSWORD}
 
@@ -28,7 +28,7 @@ springdoc.swagger-ui.enabled=true
 springdoc.swagger-ui.path=/swagger-ui/index.html
 
 # JWT
-spring.jwt.secret=vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
+spring.jwt.secret=${JWT_SECRET}
 
 # Spring Security log
 logging.level.org.springframework.security=DEBUG
