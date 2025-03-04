@@ -7,7 +7,8 @@
 - `SongController.java` (컨트롤러)
 - `SongRepository.java` (레포지토리)
 - `SongService.java` (서비스)
-  
+  * * *
+
 ### 연습 모드 1절/하이라이트 연습 부분 추가 수정하였습니다.
 
 #### 수정된 파일 목록
