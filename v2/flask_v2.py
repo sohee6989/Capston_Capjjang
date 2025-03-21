@@ -35,11 +35,11 @@ def practice_mode():
     cap_expert = cv2.VideoCapture(expert_path)
 
     if not cap_silhouette.isOpened():
-        return jsonify({"error": "❌ 실루엣 영상을 열 수 없습니다."}), 500
+        return jsonify({"error": " 실루엣 영상을 열 수 없습니다."}), 500
     if not cap_webcam.isOpened():
-        return jsonify({"error": "❌ 웹캠을 열 수 없습니다."}), 500
+        return jsonify({"error": " 웹캠을 열 수 없습니다."}), 500
     if not cap_expert.isOpened():
-        return jsonify({"error": "❌ 전문가 영상을 열 수 없습니다."}), 500
+        return jsonify({"error": " 전문가 영상을 열 수 없습니다."}), 500
     
     while True:
         ret_sil, frame_sil = cap_silhouette.read()
