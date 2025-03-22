@@ -1,7 +1,6 @@
 ## 홀로 K-pop 안무를 배우는 사용자를 대상으로 Mediapipe 동작 인식과 SAM2 안무 시각화, 3D 기술을 활용한 어려움 해결 및 지속적인 동기부여 제공 서비스
 <br><br>
 ### 39조 캡짱
-
 2171007 김유민, 22776098 남궁도윤, 2276282 정소희
 <br><br>
 ### “이 서비스는 사용자가 춤을 연습하면서 동작에 대한 정확한 피드백을 받고, 춤 실력을 효과적으로 향상하도록 돕습니다.”
@@ -28,22 +27,22 @@
 
 - 사용자의 안무 학습에 대한 효율성을 극대화
 
-1. 실시간 안무 동작 분석 - MediaPipe(https://pypi.org/project/mediapipe/](https://ai.google.dev/edge/mediapipe/solutions/studio?hl=ko)
+    1. 실시간 안무 동작 분석 - MediaPipe(https://pypi.org/project/mediapipe/](https://ai.google.dev/edge/mediapipe/solutions/studio?hl=ko)
     - 사용자의 관절 포인트를 인식하여 전문가의 동작과 비교
     - 포즈 데이터를 수치화하여 정확한 피드백 제공
 
-2. 안무 시각화 - SAM2(https://github.com/facebookresearch/sam2)
-   - 영상 내 객체(사용자)를 자동 추출하여 마스크 생성
-   - OpenCV를 활용하여 윤곽선을 강조하여 안무를 보다 직관적으로 시각화
+    2. 안무 시각화 - SAM2(https://github.com/facebookresearch/sam2)
+    - 영상 내 객체(사용자)를 자동 추출하여 마스크 생성
+    - OpenCV를 활용하여 윤곽선을 강조하여 안무를 보다 직관적으로 시각화
 
-3. 안무 비교 시스템 구축 - OpenCV(https://opencv.org/releases/)
-   - 사용자와 안무가의 영상 나란히 배치하여 비교
-   - 네온 효과 및 윤곽선 분석을 통해 학습 효과를 극대화
-
+    3. 안무 비교 시스템 구축 - OpenCV(https://opencv.org/releases/)
+    - 사용자와 안무가의 영상 나란히 배치하여 비교
+    - 네온 효과 및 윤곽선 분석을 통해 학습 효과를 극대화
+<br>
 - 사용자의 안무 학습에 대한 몰입감을 극대화
-1. 가상 아이돌과 챌린지 모드 - Unity(https://unity.com/kr)
-   - 사용자가 가상의 아이돌 캐릭터와 함께 춤을 추는 모드를 제공하여 흥미와 몰입감을 유발
-   - 사용자의 지속적인 연습을 유도하고 동기부여 강화
+    1. 가상 아이돌과 챌린지 모드 - Unity(https://unity.com/kr)
+    - 사용자가 가상의 아이돌 캐릭터와 함께 춤을 추는 모드를 제공하여 흥미와 몰입감을 유발
+    - 사용자의 지속적인 연습을 유도하고 동기부여 강화
     
 <br><br>
 ### 기대성과
