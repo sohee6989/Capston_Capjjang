@@ -16,7 +16,7 @@
   실루엣 영상을 오버레이한 웹캠 피드를 제공
 - **쿼리 매개변수:**  
   - songTitle (문자열, 필수): 연습에 사용할 곡 제목 (예: "Mantra")
-이 값에 따라 {songTitle}_expert.mp4 및 {songTitle}_silhouette.mp4 파일이 로드됩니다.
+이 값에 따라 {songTitle}_expert.mp4 및 {songTitle}_silhouette.mp4 파일이 로드됨
 
 ---
 
