@@ -10,7 +10,7 @@ import capston.capston_spring.exception.UserNotFoundException;
 import capston.capston_spring.repository.AccuracySessionRepository;
 import capston.capston_spring.repository.SongRepository;
 import capston.capston_spring.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value; // application.properties 값 가져오기 위해 추가
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,13 @@ import java.util.*;
 
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccuracySessionService {
     private final AccuracySessionRepository accuracySessionRepository;
     private final SongRepository songRepository;
     private final UserRepository userRepository;
 
-    @Value("${flask.api.analyze}") // application.properties에서 Flask API URL 가져오기
+    @Value("${flask.api.analyze}")
     private String flaskAnalyzeUrl;
 
     /** ID 기반 곡 조회 (곡 조회는 계속 사용됨) **/
