@@ -71,7 +71,7 @@ def process_and_compare_videos(*, song_title):
                     continue
 
             # 프레임 비율 유지하면서 리사이즈
-            frame_expert_resized = resize_with_aspect_ratio(frame_expert, 640, 480)
+            # frame_expert_resized = resize_with_aspect_ratio(frame_expert, 640, 480)
             frame_cam_resized = resize_with_aspect_ratio(frame_cam, 640, 480)
             frame_silhouette_resized = resize_with_aspect_ratio(frame_sil, 640, 480)
 
@@ -139,9 +139,9 @@ def process_and_compare_videos(*, song_title):
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
             # 두 영상 나란히 보기
-            combined_frame = cv2.hconcat([frame_expert_resized, blended_user])
+            # combined_frame = cv2.hconcat([frame_expert_resized, blended_user])
             # 결합된 프레임 출력
-            cv2.imshow("Accuracy Mode", combined_frame)
+            cv2.imshow("Accuracy Mode", blended_user)
 
             # 종료 조건 (q 키를 누르면 종료)
             if cv2.waitKey(1) & 0xFF == ord('q'):
