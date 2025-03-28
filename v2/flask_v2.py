@@ -32,30 +32,30 @@ def practice_mode():
         return jsonify({"error": "songTitle 파라미터가 필요합니다."}), 400
 
     expert_video_path = f"videos1/{song_title}_expert.mp4"  # _expert 추가
-    silhouette_path = f"video_uploads/{song_title}_silhouette.mp4"
+    silhouette_path = f"static/output/{song_title}_silhouette.mp4"
 
     cap_silhouette = cv2.VideoCapture(silhouette_path)
     cap_webcam = cv2.VideoCapture(0)
-    cap_expert = cv2.VideoCapture(expert_video_path)
+    # cap_expert = cv2.VideoCapture(expert_video_path)
 
     if not cap_silhouette.isOpened():
         return jsonify({"error": " 실루엣 영상을 열 수 없습니다."}), 500
     if not cap_webcam.isOpened():
         return jsonify({"error": " 웹캠을 열 수 없습니다."}), 500
-    if not cap_expert.isOpened():
-        return jsonify({"error": " 전문가 영상을 열 수 없습니다."}), 500
+    # if not cap_expert.isOpened():
+        # return jsonify({"error": " 전문가 영상을 열 수 없습니다."}), 500
     
     while True:
         ret_sil, frame_sil = cap_silhouette.read()
         ret_cam, frame_cam = cap_webcam.read()
-        ret_exp, frame_exp = cap_expert.read()
+        # ret_exp, frame_exp = cap_expert.read()
 
         if not ret_sil:
             cap_silhouette.set(cv2.CAP_PROP_POS_FRAMES, 0)
             continue
-        if not ret_exp:
-            cap_expert.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            continue
+        # if not ret_exp:
+            # cap_expert.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            # continue
         if not ret_cam:
             break
 
@@ -65,21 +65,21 @@ def practice_mode():
         # 크기 맞추기
         frame_sil = resize_with_aspect_ratio(frame_sil, 640, 480)
         frame_cam = resize_with_aspect_ratio(frame_cam, 640, 480)
-        frame_exp = resize_with_aspect_ratio(frame_exp, 640, 480)
+        # frame_exp = resize_with_aspect_ratio(frame_exp, 640, 480)
 
         # 실루엣 오버레이
         blended = cv2.addWeighted(frame_cam, 0.5, frame_sil, 0.5, 0)
 
         # 전문가 + 사용자(오버레이) 나란히 출력
-        combined = cv2.hconcat([frame_exp, blended])
-        cv2.imshow("Practice Mode", combined)
+        # combined = cv2.hconcat([frame_exp, blended])
+        cv2.imshow("Practice Mode", blended)
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
     cap_silhouette.release()
     cap_webcam.release()
-    cap_expert.release()
+    # cap_expert.release()
     cv2.destroyAllWindows()
     return jsonify({"message": "Practice mode 종료"})
 
