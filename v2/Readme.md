@@ -31,9 +31,9 @@
 ### 서버는 아래의 형식으로 영상 파일을 자동 로드:
 
 전문가 영상 (안무가): videos1/{songTitle}_expert.mp4
-실루엣 영상 (사용자 추출): video_uploads/{songTitle}_silhouette.mp4
+실루엣 영상 (사용자 추출): static/output/{songTitle}_silhouette.mp4
 
 예시:
 songTitle = "Mantra"일 경우:
  전문가 영상 → videos1/Mantra_expert.mp4
- 실루엣 영상 → video_uploads/Mantra_silhouette.mp4
+ 실루엣 영상 → static/output/Mantra_silhouette.mp4
