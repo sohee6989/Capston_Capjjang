@@ -1,0 +1,7 @@
+flask
+opencv-python-headless
+boto3
+mediapipe
+numpy
+fastdtw
+scipy
