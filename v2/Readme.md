@@ -1,11 +1,11 @@
 ## 실행 방법
 
 ### cmd에 python flask_v2.py 를 입력  
-### **연습모드** : 브라우저에 http://localhost:5000/practice-mode?song_title=Mantra
-### **연습모드** : 브라우저에 http://localhost:5000/practice-mode?song_title=Vividiva
+### **연습모드** : 브라우저에 http://localhost:5000/practice-mode?songTitle=Mantra
+### **연습모드** : 브라우저에 http://localhost:5000/practice-mode?songTitle=Vividiva
 
-### **정확도모드** : 브라우저에 http://localhost:5000/accuracy-mode?song_title=Mantra
-### **정확도모드** : 브라우저에 http://localhost:5000/accuracy-mode?song_title=Vividiva
+### **정확도모드** : 브라우저에 http://localhost:5000/accuracy-mode?songTitle=Mantra
+### **정확도모드** : 브라우저에 http://localhost:5000/accuracy-mode?songTitle=Vividiva
 
 ---
 
