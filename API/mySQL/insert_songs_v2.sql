@@ -87,3 +87,22 @@ INSERT INTO song (
     'https://danzle-s3-bucket.s3.ap-northeast-2.amazonaws.com/songs/Antifragile/Antifragile_cover.jpg',
     'Score (13) & Megatone', 105
 );
+
+INSERT INTO song (
+    title, artist, duration, genre,
+    full_start_time, full_end_time,
+    highlight_start_time, highlight_end_time,
+    audio_file_path, silhouette_video_path,
+    dance_guide_path, avatar_video_with_audio_path,
+    cover_image_path, created_by, bpm
+) VALUES (
+    'Mantra', 'JENNIE', 136, 'K-Pop',
+    20, 80, 30, 60,
+    'https://danzle-s3-bucket.s3.ap-northeast-2.amazonaws.com/songs/Mantra/audio.mp3',
+    'https://danzle-s3-bucket.s3.ap-northeast-2.amazonaws.com/songs/Mantra/Mantra_silhouette.mp4',
+    'https://danzle-s3-bucket.s3.ap-northeast-2.amazonaws.com/songs/Mantra/Mantra_expert.mp4',
+    'https://danzle-s3-bucket.s3.ap-northeast-2.amazonaws.com/songs/Mantra/avatar.mp4',
+    'https://danzle-s3-bucket.s3.ap-northeast-2.amazonaws.com/songs/Mantra/Mantra_cover.jpg',
+    'JENNIE', 105
+);
+
