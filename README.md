@@ -9,7 +9,7 @@
 ### 📍 파일 📍
 - Character: Unity를 이용해 춤추는 가상의 아바타를 만들어주는 코드입니다.
 - Contour: Sam2, openCV를 이용해 안무 영상의 실루엣을 추출해주는 코드입니다.
-- pose: mediapipe와 openCV를 이용해 사용자의 안무를 평가하는 코드입니다.
+- pose: mediapipe와 openCV, Gemini를 이용해 사용자의 안무를 평가하는 코드입니다.
 
 <br><br>
 ### pain point
@@ -36,11 +36,14 @@
     - OpenCV를 활용하여 윤곽선을 강조하여 안무를 보다 직관적으로 시각화
 
     3. 안무 비교 시스템 구축 - OpenCV(https://opencv.org/releases/)
-    - 사용자와 안무가의 영상 나란히 배치하여 비교
-    - 네온 효과 및 윤곽선 분석을 통해 학습 효과를 극대화
+    -  안무 영상에서 안무가의 마스크 외곽선을 감지
+    -  안무가 실루엣을 네온 효과로 강조하여 학습 효과를 극대화
+ 
+    4. 사용자 맞춤형 안무 피드백 - Google Gemini Vision AI(https://ai.google.dev/gemini-api/docs/api-key?hl=ko)
+    - 정확도 모드가 끝난 이후, 사용자의 유사도 점수가 낮은 구간을 조회해 사용자 맞춤 코칭을 제공
+    - 사용자와 안무가 두 이미지 간의 자세 차이를 인식하고 피드백을 반환
 
-- 사용자의 안무 학습에 대한 몰입감을 극대화
-    1. 가상 아이돌과 챌린지 모드 - Unity(https://unity.com/kr)
+    6. 가상 아이돌과 챌린지 모드 - Unity(https://unity.com/kr)
     - 사용자가 가상의 아이돌 캐릭터와 함께 춤을 추는 모드를 제공하여 흥미와 몰입감을 유발
     - 사용자의 지속적인 연습을 유도하고 동기부여 강화
     
